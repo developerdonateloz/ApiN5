@@ -1,4 +1,7 @@
-﻿using Core.RequestParams;
+﻿using ApiN5.Consumers;
+using ApiN5.Producers;
+using Confluent.Kafka;
+using Core.RequestParams;
 using Core.Services;
 using Core.Services.Impl;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +13,19 @@ namespace ApiN5.Controllers
     {
         private readonly IPermissionService _permissionService;
         private readonly ILogger _logger;
-        public PermissionController(IPermissionService permissionService,ILogger<PermissionController> logger)
+
+        private readonly KafkaProducer _producer;
+        private readonly KafkaConsumer _consumer;
+
+        public PermissionController(IPermissionService permissionService,ILogger<PermissionController> logger,IConfiguration configuration)
         {
             _permissionService = permissionService;
             _logger = logger;
+
+            var bootstrapServer = configuration["Kafka:BootstrapServers"];
+            var groupId = configuration["Kafka:GroupId"];
+
+
         }
         [Route("request")]
         [HttpPost]
@@ -22,6 +34,7 @@ namespace ApiN5.Controllers
             try
             {
                 var response = await _permissionService.CreatePermission(param);
+                _producer.ProduceAsync("Request Permission", "Status: OK").Wait();
                 return Ok(response);
             }
             catch (BadHttpRequestException ex)
@@ -42,7 +55,7 @@ namespace ApiN5.Controllers
         {
             try
             {
-                var response = await _permissionService.CreatePermission(param);
+                var response = await _permissionService.ModifyPermission(param);
                 return Ok(response);
             }
             catch (BadHttpRequestException ex)
