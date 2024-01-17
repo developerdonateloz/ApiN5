@@ -106,7 +106,7 @@ namespace Core.Services.Impl
         {
             _logger.LogInformation("Service GetPermissions");
 
-            var listPermissions = await _dataContext.Permissions
+            var permission = _dataContext.Permissions
                 .Join(_dataContext.PermissionTypes, x => x.PermissionTypeId, y => y.Id,
                     (x, y) => new
                     {
@@ -121,14 +121,14 @@ namespace Core.Services.Impl
                     PermissionTypeId = s.permissions.PermissionTypeId,
                     PermissionTypeDescription = s.permissiontype.Description,
                     PermissionDate = s.permissions.PermissionDate
-                }).ToListAsync();
+                });
 
-            //if (permissionId != null)
-            //{
-            //    permission = permission.Where(q => q.Id == permissionId);
-            //}
+            if (permissionId != null)
+            {
+                permission = permission.Where(q => q.Id == permissionId);
+            }
 
-            //var listPermissions = await permission.ToListAsync();
+            var listPermissions = await permission.ToListAsync();
 
             if (listPermissions.Count == 0)
             {
