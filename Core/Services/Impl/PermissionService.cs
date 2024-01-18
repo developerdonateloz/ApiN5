@@ -23,7 +23,7 @@ namespace Core.Services.Impl
             var permissionTypeExist = await _dataContext.PermissionTypes
                 .AnyAsync(q => q.Id == param.PermissionTypeId);
 
-            if (permissionTypeExist)
+            if (!permissionTypeExist)
             {
                 _logger.LogError($"PermissionType with Id: {param.PermissionTypeId} doesn't exist.");
 
