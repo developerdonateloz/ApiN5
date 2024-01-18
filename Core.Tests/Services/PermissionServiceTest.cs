@@ -1,7 +1,6 @@
 ﻿using Core.DbModel.Entities;
 using Core.RequestParams;
 using Core.Services.Impl;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 

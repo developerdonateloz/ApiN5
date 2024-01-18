@@ -1,9 +1,11 @@
 ﻿using ApiN5.Consumers;
 using ApiN5.Producers;
+using Azure.Core;
 using Confluent.Kafka;
 using Core.RequestParams;
 using Core.Services;
 using Core.Services.Impl;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiN5.Controllers
@@ -31,6 +33,7 @@ namespace ApiN5.Controllers
         [HttpPost]
         public async Task<ActionResult> RequestPermission(PermissionRequestParams param)
         {
+            _logger.LogInformation($"Service: RequestPermission");
             try
             {
                 var response = await _permissionService.CreatePermission(param);
@@ -53,6 +56,7 @@ namespace ApiN5.Controllers
         [HttpPut]
         public async Task<ActionResult> ModifyPermission(PermissionRequestParams param)
         {
+            _logger.LogInformation($"Service: ModifyPermission");
             try
             {
                 var response = await _permissionService.ModifyPermission(param);
@@ -74,7 +78,7 @@ namespace ApiN5.Controllers
         [HttpGet]
         public async Task<ActionResult> GetPermissions(int? permissionId)
         {
-            _logger.LogInformation("ORALE MANO");
+            _logger.LogInformation($"Service: GetPermissions");
             try
             {
                 var response = await _permissionService.GetPermission(permissionId);

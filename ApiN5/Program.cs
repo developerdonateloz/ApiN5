@@ -1,3 +1,4 @@
+using ApiN5.Authentication;
 using Core.DbModel.Context;
 using Core.Services;
 using Core.Services.Impl;
@@ -37,6 +38,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.UseAuthorization();
 
