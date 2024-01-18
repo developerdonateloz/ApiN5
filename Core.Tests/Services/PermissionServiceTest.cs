@@ -1,6 +1,7 @@
 ﻿using Core.DbModel.Entities;
 using Core.RequestParams;
 using Core.Services.Impl;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -23,10 +24,11 @@ namespace Core.Tests.Services
             var context = _fixture.CreateNewDbContext();
 
             var sut = new PermissionService(context, _logger);
-            
-            context.PermissionTypes.Add(new PermissionType{
-                Id=1,
-                Description="Type One"
+
+            context.PermissionTypes.Add(new PermissionType
+            {
+                Id = 1,
+                Description = "Type One"
             });
             await context.SaveChangesAsync();
 
@@ -49,38 +51,77 @@ namespace Core.Tests.Services
 
             var sut = new PermissionService(context, _logger);
 
-            context.PermissionTypes.Add(new PermissionType{
-                Id=1,
-                Description="First Type"
+            context.PermissionTypes.Add(new PermissionType
+            {
+                Id = 1,
+                Description = "First Type"
             });
-            context.PermissionTypes.Add(new PermissionType{
-                Id=2,
-                Description="Second Type"
+            context.PermissionTypes.Add(new PermissionType
+            {
+                Id = 2,
+                Description = "Second Type"
             });
 
-            context.Permissions.Add(new Permission{
-                Id=3,
-                EmployeeForename="Tony",
-                EmployeeSurname="Surname",
-                PermissionTypeId=1
+            context.Permissions.Add(new Permission
+            {
+                Id = 3,
+                EmployeeForename = "Tony",
+                EmployeeSurname = "Surname",
+                PermissionTypeId = 1
             });
 
             await context.SaveChangesAsync();
 
             var requestPermissionParams = new PermissionRequestParams
             {
-                Id=3,
+                Id = 3,
                 EmployeeForename = "Steven",
                 EmployeeSurname = "Rogers",
                 PermissionTypeId = 2,
             };
 
-            var res=await sut.ModifyPermission(requestPermissionParams);
+            var res = await sut.ModifyPermission(requestPermissionParams);
 
-            Assert.Equal(requestPermissionParams.Id,res.Id);
-            Assert.Equal(requestPermissionParams.EmployeeForename,res.EmployeeForename);
-            Assert.Equal(requestPermissionParams.EmployeeSurname,res.EmployeeSurname);
-            Assert.Equal(requestPermissionParams.PermissionTypeId,res.PermissionTypeId);
+            Assert.Equal(requestPermissionParams.Id, res.Id);
+            Assert.Equal(requestPermissionParams.EmployeeForename, res.EmployeeForename);
+            Assert.Equal(requestPermissionParams.EmployeeSurname, res.EmployeeSurname);
+            Assert.Equal(requestPermissionParams.PermissionTypeId, res.PermissionTypeId);
+        }
+
+        [Fact(DisplayName = "Should Get Permissions")]
+        public async void GetPermission()
+        {
+            var context = _fixture.CreateNewDbContext();
+
+            var sut = new PermissionService(context, _logger);
+
+            // ARRANGE
+            context.PermissionTypes.Add(new PermissionType
+            {
+                Id = 1,
+                Description = "First Type"
+            });
+            context.PermissionTypes.Add(new PermissionType
+            {
+                Id = 2,
+                Description = "Second Type"
+            });
+
+            context.Permissions.Add(new Permission
+            {
+                Id = 2,
+                EmployeeForename = "Bruce",
+                EmployeeSurname = "Banner",
+                PermissionTypeId = 2
+            });
+
+            await context.SaveChangesAsync();
+
+            // ACT
+            var res2 = await sut.GetPermission(2);
+
+            //ASSERT
+            Assert.True(res2.Count == 1);
         }
     }
 }
